@@ -4,15 +4,20 @@ import Modal from "./Modal/modal";
 
 export default function EffectSection(){
     const[modal,setModal]=useState(false)
-    const[loading,serLoading] = useState(false)
+    const[loading,setLoading] = useState(false)
+    const[data,setData] = useState([])
 
-    async function FeacthUsers() {
-        const respons = await fetch('https://jsonplaceholder.typicode.com/users')
-        const data = await respons.json()        
-    }
 
+    
     useEffect(()=>{
-
+        async function FeacthUsers() {
+            setLoading(true)
+            const respons = await fetch('https://jsonplaceholder.typicode.com/users')
+            const data = await respons.json() 
+            setData(data)
+            setLoading(false)
+        }
+        FeacthUsers()
     },[])
 
     function openModal(){
@@ -22,13 +27,19 @@ export default function EffectSection(){
     return(
         <section>
             <h1>Effects</h1>
-            <Button onClick={openModal}>открыть инфу</Button>
+            <Button style={{marginBottom: '1rem'}} onClick={openModal}>открыть инфу</Button>
 
             <Modal open={modal}>
                 <h3>hello pidor</h3>
                 <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae vero numquam ea culpa quam dolores.</p>
                 <Button onClick={()=>setModal(false)}>закрыть</Button>
             </Modal>
+
+            {loading && <p>жди лох....</p>}
+            {!loading && <ul>
+                {data.map(user => <li key={user.id}>
+                    {user.name}
+                </li>)}</ul>}
         </section>
     
     )
